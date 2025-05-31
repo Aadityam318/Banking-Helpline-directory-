@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<label for="language-select"><strong>Select Language:</strong></label>
+<select id="language-select" onchange="setLanguage(this.value)">
+  <option value="en">English</option>
+  <option value="hi">हिन्दी</option>
+  <option value="bn">বাংলা</option>
+  <option value="ta">தமிழ்</option>
+</select>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Indian Banking Helpline Directory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta charset="UTF-8">
+      <title>Banking Chatbot</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f6f8; }
+      header { background-color: #003366; color: white; text-align: center; padding: 20px; }
+      h1 { margin: 0; }
+  
+      .rbi-headline {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 2px solid #ffc107;
+      }
+  
+      .rbi-info {
+        background-color: #e9f7ef;
+        padding: 15px;
+        color: #155724;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.6;
+        border-bottom: 2px solid #28a745;
+      }
+  
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px auto;
+        background-color: #ffffff;
+      }
+  
+      th, td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+      }
+  
+      th {
+        background-color: #e6f2ff;
+      }
+  
+      img.logo {
+        width: 40px;
+        height: auto;
+      }
+  
+      a.button {
+        padding: 6px 12px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+      }
+  
+      a.button:hover {
+        background-color: #0056b3;
+      }
+  
+      .scam-alerts {
+        background-color: #ffeb3b;
+        color: #856404;
+        padding: 15px;
+        font-size: 18px;
+        text-align: center;
+        border-top: 2px solid #fbc02d;
+        margin-top: 20px;
+      }
+  
+      .footer {
+        background-color: #003366;
+        color: white;
+        padding: 20px;
+      }
+  
+      .footer h3 {
+        margin-top: 0;
+      }
+  
+      .container {
+        padding: 0 20px;
+      }
+  
+      ul { padding-left: 20px; }
+      
+  
+
+
+#real-time-alert span {
+  margin-left: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; top: -20px; }
+  to { opacity: 1; top: 0; }
+} 
+    #chatbot {
+      position: fixed;
+      top : 20px;
+      right: 20px;
+      width: 300px;
+      max-height: 300px;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-family: Arial, sans-serif;
+    }
+    #chat-header {
+      background: #004d40;
+      color: white;
+      padding: 10px;
+      font-weight: bold;
+      text-align: center;
+    }
+    #chat-window {
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+    }
+    .msg {
+      margin: 8px 0;
+    }
+    .user {
+      text-align: right;
+      color: #00695c;
+    }
+    .bot {
+      text-align: left;
+      color: #333;
+    }
+    #chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+    #chat-input input {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      outline: none;
+    }
+    #chat-input button {
+      padding: 8px 12px;
+      background: #004d40;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    </style>
+    
+  </head>
+  <body>
+  
+  <header>
+    <h1>Centralized Banking Helpline Directory</h1>
+  </header>
+  
+  <div class="rbi-headline">
+    
+</header>
+
+  </header>
+  <div>
+    ⚠️ RBI Advisory: Never share OTP, PIN, or passwords. RBI and banks never ask for this information.
+  </div>
+  </header>
+
+ 🔗 <strong>RBI Official Website:</strong> <a href="https://www.rbi.org.in" target="_blank">www.rbi.org.in</a><br>
+   ☎️ <strong>Cyber Fraud Helpline:</strong> Dial <strong>1930</strong><br>
+    📌 <strong>Guidelines:</strong> Do not share banking info, verify app sources, and report frauds to your bank or cyber cell immediately.
+  </div>
+   <div id="alert-container">
+  <div id="real-time-alert">
+    <strong>🔔 Real-Time Alert:</strong>
+    <span id="alert-message">Loading latest alert...</span>
+  </div>
+</div>
+ 
+
+
+  <div class="container">
+    <div style="text-align: center; padding: 20px;">
+      <input type="text" id="bankSearch" onkeyup="filterBanks()" placeholder="Search for a bank..." style="padding: 10px; width: 80%; max-width: 400px; font-size: 16px;">
+    </div>
+    <table>  
+      <thead>
+        <tr>
+          <th>Logo</th>
+          <th>Bank Name</th>
+          <th>General Helpline</th>
+          <th>ATM Helpline</th>
+          <th>UPI / Online</th>
+          <th>Help Section</th>
+        </tr>
+      
+      </thead>
+      <div id="chatbot">
+  <div id="chat-header">🧾 Banking Chatbot</div>
+  <div id="chat-window"></div>
+  <div id="chat-input">
+    <input type="text" id="user-input" placeholder="Type your question...">
+    <button onclick="sendMsg()">Send</button>
+    
+  </div>
+      <tbody>
+    <tbody>
+
+      <!-- Bank 1 - State Bank of India --> 
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/SBI-logo.svg" class="logo" alt="SBI Logo"></td>
+        <td>State Bank of India</td>
+        <td>1800 1234</td>
+        <td>1800 112 211</td>
+        <td>1800 11 22 11</td>
+        <td><a href="https://crcf.bank.sbi/ccf" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://retail.onlinesbi.sbi/retail/blockatmcard.htm" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.sbi.co.in" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <!-- Bank 2 - HDFC Bank -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/2/28/HDFC_Bank_Logo.svg" class="logo" alt="HDFC Logo"></td>
+        <td>HDFC Bank</td>
+        <td>1800 202 6161</td>
+        <td>1800 22 1006</td>
+        <td>1800 120 1243</td>
+        <td><a href="https://www.hdfcbank.com/personal/need-help/customer-care" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.hdfcbank.com/personal/pay/cards/debit-cards/block-loststolen-card" target="_blank" class="button">Block card</a></td>
+
+        <td><a href="https://www.hdfcbank.com" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      
+    
+      <!-- Bank 3 - ICICI Bank -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/1/12/ICICI_Bank_Logo.svg" class="logo" alt="ICICI Logo"></td>
+        <td>ICICI Bank</td>
+        <td>1800 1080</td>
+        <td>1800 22 4848</td>
+        <td>1860 120 7777</td>
+        <td><a href="https://www.icicibank.com/complaints" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.icicibank.com/terms-condition/bank-account-block-debit-atm-card" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.icicibank.com" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <!-- Bank 4 - Axis Bank -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/AXISBank_Logo.svg" class="logo" alt="Axis Logo"></td>
+        <td>Axis Bank</td>
+        <td>1800 419 5959</td>
+        <td>1800 233 5577</td>
+        <td>1860 419 5555</td>
+        <td><a href="https://www.axisbank.com/support" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://application.axisbank.co.in/WebForms/axis-support/Block-dccard.aspx" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.axisbank.com" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <!-- Bank 5 - Kotak Mahindra Bank -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/en/3/39/Kotak_Mahindra_Group_logo.svg" class="logo" alt="Kotak Logo"></td>
+        <td>Kotak Mahindra Bank</td>
+        <td>1860 266 2666</td>
+        <td>1860 266 0811</td>
+        <td>1860 266 2666</td>
+        <td><a href="https://www.kotak.com/en/customer-service/grievance-redressal.html" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.kotak.com/en/help-center/bank-account/debit-card-and-atm/block---unblock-debit-card.html" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.kotak.com" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <!-- Bank 6 - Punjab National Bank -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Punjab_National_Bank_new_logo.svg" class="logo" alt="PNB Logo"></td>
+        <td>Punjab National Bank</td>
+        <td>1800 180 2222</td>
+        <td>1800 103 2222</td>
+        <td>1800 103 2222</td>
+        <td><a href="https://www.pnbindia.in/Lodge-Complaint.html" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.pnbindia.in/hotlist-debit-card.html" target="_blank" class="button">Block card</a> </a></td>
+        <td><a href="https://www.pnbindia.in" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <!-- Add more banks here (total 20 banks) -->
+      <!-- Example: Bank 7 -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/en/f/f2/BankOfBarodaLogo.svg" class="logo" alt="Bank of Baroda Logo"></td>
+        <td>Bank of Baroda</td>
+        <td>1800 258 0444</td>
+        <td>1800 222 144</td>
+        <td>1800 258 0444</td>
+        <td><a href="https://bobcrm.bankofbaroda.co.in/onlinecomplaint/" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.bankofbaroda.in/banking-mantra/digital/articles/how-to-block-a-atm-card" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.bankofbaroda.in" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <!-- Continue adding banks similarly -->
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/en/9/9f/Canara_bank_logo.svg" class="logo"></td>
+        <td>Canara Bank</td>
+        <td>1800 425 1122</td>
+        <td>1800 425 1122</td>
+        <td>1800 42 2550</td>
+        <td><a href="https://canarabank.com/pages/complaints" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://canarabank.com/hotlisting-debit-and-credit-cards" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.canarabank.com" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/en/8/80/Bank_of_India_logo.svg" class="logo"></td>
+        <td>Bank of India</td>
+        <td>1800 103 1906</td>
+        <td>1800 103 1906</td>
+        <td>1800 22 0229</td>
+        <td><a href="https://bankofindia.co.in/hi/grievance-redressal" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://blinkx.in/banking/block-bank-of-india-atm-card" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.bankofindia.co.in" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/en/b/bc/Indian_Bank_logo.svg" class="logo"></td>
+        <td>Indian Bank</td>
+        <td>1800 425 0000</td>
+        <td>1800 425 0000</td>
+        <td>1800 425 0000</td>
+        <td><a href="https://www.indianbank.in/contact-us/grievance-redressal" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.indianbank.in/departments/block-lost-atm-card/" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.indianbank.in" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Union_Bank_of_India_Logo.svg" class="logo"></td>
+        <td>Union Bank of India</td>
+        <td>1800 208 2244</td>
+        <td>1800 208 2244</td>
+        <td>1800 208 2244</td>
+        <td><a href="https://www.unionbankofindia.co.in/english/grievance-redressal.aspx" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.unionbankofindia.co.in/en/common/contact-us" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.unionbankofindia.co.in" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/en/2/2f/South_Indian_Bank_Logo.svg" class="logo"></td>
+        <td>South Indian Bank</td>
+        <td>1800 425 1809</td>
+        <td>1800 425 1809</td>
+        <td>1800 425 1809</td>
+        <td><a href="https://www.southindianbank.com/contact-us/grievance-redressal" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://online.southindianbank.com/OnlineCardBlock/#no-back-button" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.southindianbank.com" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <tr>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Yes_Bank_Logo_in_2024.png" class="logo"></td>
+        <td>Yes Bank</td>
+        <td>1800 1200 </td>
+        <td>1800 103 1212</td>
+        <td>1800 1200</td>
+        <td><a href="https://www.yesbank.in/work-with-us/career-opportunities/report-incident" target="_blank" class="button">Help Section</a></td>
+        <td><a href="https://www.yesbank.in/debitcard-block-dispute" target="_blank" class="button">Block card</a></td>
+        <td><a href="https://www.yesbank.in/" target="_blank" class="button">Visit Website</a></td>
+      </tr>
+      <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>Central Bank of India</td>
+      <td>1800 22 1911</td>
+      <td>1800 22 1911</td>
+      <td>1800 22 1911</td>
+      <td><a href="https://www.centralbankofindia.co.in/en/customer_care" target="_blank"class="button">Help Section</a></td>
+      <td><a href="https://icc.centralbank.co.in/cucms_cboi/docket/srbooking/srbooking/" target="_blank"class="button">Block ATM</a></td>
+      <td><a href="https://www.centralbankofindia.co.in" target="_blank"class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="https://www.iob.in/images/logo.png" width="50"></td>
+      <td>Indian Overseas Bank</td>
+      <td>1800 425 4445</td>
+      <td>1800 425 4445</td>
+      <td>1800 890 4445</td>
+      <td><a href="https://www.iob.in/contact-centre-information" target="_blank"class="button"class="button">Help Section</a></td>
+      <td><a href="https://www.iobnet.co.in/ibanking/ibSuspendCardEntry.do" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.iob.in" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>UCO Bank</td>
+      <td>1800 274 0123</td>
+      <td>1800 274 0123</td>
+      <td>1800 274 0123</td>
+      <td><a href="https://spgrs.ucoonline.in/" target="_blank"class="button"class="button">Complaint </a></td>
+       <td><a href="https://ucobank.com/help-section" target="_blank" class="button">Block ATM</a></td>
+       
+      <td><a href="https://www.ucobank.com" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>IDBI Bank</td>
+      <td>1800 209 4324</td>
+      <td>1800 209 4324</td>
+      <td>1800 209 4324</td>
+      <td><a href="https://www.idbibank.in/banking-complaints-i.aspx" target="_blank" class="button">Complaint </a></td>
+      <td><a href="https://www.idbibank.in/contact-us.aspx" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.idbibank.in" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>Federal Bank</td>
+      <td>1800 425 1199</td>
+      <td>1800 425 1199</td>
+      <td>1800 425 1199</td>
+      <td><a href="https://www.federalbank.co.in/grievance-redressal" target="_blank" class="button">Complaint</a></td>
+      <td><a href="https://www.federalbank.co.in/block-atm" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.federalbank.co.in" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/png;base64,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" width="50"></td>
+      <td>RBL Bank</td>
+      <td>1800 121 9050</td>
+      <td>1800 121 9050</td>
+      <td>1800 121 9050</td>
+      <td><a href="https://www.rblbank.com/contact-us" target="_blank" class="button">Help Section</a></td>
+      <td><a href="https://www.rblbank.com/block-channel" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.rblbank.com" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N//AABEIAIIAigMBIgACEQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABAYCBQcDAQj/xAA+EAABAwMBBAYHBAoDAQAAAAABAAIDBAURBhIhMeEVF0FRk9ITU1RhY3GiBxQyoRYiI0JSgZHB0fAzcoIk/8QAGwEBAAIDAQEAAAAAAAAAAAAAAAQFAQMGBwL/xAA0EQAABAMECgECBgMAAAAAAAAAAQIDBAUREhRRUhMVFiExQVORodFxYfAiQoGxweEGIzL/2gAMAwEAAhEDEQA/APPrR1N6yk8DmnWjqb1lJ4HNUpF0l2ZykKK8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5hdetHU3rKTwOadaOpvWUngc1SkS7M5SC8O5gRbSo09d6ejoauWhkEFcQKZzSHGQkZAwDkZHDPFQq2jqKCrkpa2F0M8Rw+N3EFbiUk+BjUaTLiQ8ERFkYBERABERABSqC3VtylMVvpJ6l4/EIYy7Z+eOC2OlbH0zWn0202khwZXN3F3c0e879/YP5LqVO4UlK2lomtpqZv4YYRst/n2k+85KpZnO2oJWjIrSsMPkWcFLFxJWzOiRzL9CdTeh9L0LVbOM8Bn+mcrxi0re3V8FJPbqmmMzwwSzxObG3PaXYxgLqe27Odp2e/KzfUTvZsPmkcz+FzyQqfapdD/wBfkWGo0VL8Y47e7TWWO5S0Fwj2Jo+0b2vaeDmntB/3eoK7Fqqy/pPYC2Ju1dKBpfB3ys7Wf49+O8rjq6WXxqYxgnE/qKaMhjh3DQfAERFNEUEREAfoWvsMkenHW6zzGKanf6Wge859C4O2mtyc/q8W7/3Tjeuc3fQOsLnXS1tc6lqKiU/rOE4HuAAwMBX7X1wnptGXCroJp6eaN7GNkAcxwxM1pxnfg79/aDngVrNPwSUtgt9zvt8vU8tdsFjYZJHtbtjLW7LQTw4kqkYccbRbKnGnDeLd1tC1WDwFCd9m+qBwoY3fKoZ/la276SvtnpXVVxt7oqdpAMge1wGTgZwSu5ahozVU0MQvVTbCXhjZIXtBkceDcnfn5FcX1tBerTdJLXc7vV10WyJIzLO9zXtPA7JJwcg/0UuGiXHjoZl2MRX4dDRVKvgVpERWAhAs4opJpWxQxvkkecNYxpJce4AcVguhaEsr6BjLrMCyqkGYd++NhHH5kfl8yoUfHNwTJur/AELExJhIVcS5YSJWhoXQ2HZfCY3+nk29oYJcMA5HZjAGPcrApVTWuqoWtnY0yNORI3cT35Haoi84jnyiIhTqfzbx2MM0bTSWz5DxlrKWGZkM1TDHK/AbG+QBzs8MA8V7rRXawy/pvFeaSKOqpahvpNgzNaYHBoYcg5JA4jA447lvGggHJ2v1iM4x/Jbo6DbhyQbarVoq/f8AY+IaIU6aiUmlDoPeJ1TRhtbFT1EjWHP7KFzy73YaCVyLVUkE2o7hLS001NDLMXthmZsPbnecjsycnC6y2WRpBbI8EdziFlW01JqCm6PvTBIHboanH7SB3YQe7PYf5qwkkyZhFWFkf4udd3YRJlBuRCapMtw4eik3OhmtlxqaGpA9LTyOjdjgcHiPceKjLviOpVIcmZUOhj1poxNUwxOJDXva0kcQCcLr/VNZOyuuWP8AvH5FyCkOzVwO7pGn81+nYzmNpHaAq6Pdcbs2ToJ0G2hdbRVHN9W6vtV++z6qMM8cNXO5jRRvkBkGzK08O7AzlVHT/wBoN7sVCyhiFPU08e6NtQ0ksHcCCN3zyqmikohW0oNFKlWo0LiVqUSi3GOp621Taqt2maxssNbFFMKiopYpMuYcN49xGTuOM4+apuutQx6lvzq2CJ0UDIxFGH/icAScn35J/JV5FlqHQ3SnIYcfUuteYIiLeNI3GlaGlrbq0180MdNCPSPEz2tD8Hc3eeHf7h711CGaOojEsMjZGOzh7TkHfjce1cXV1+z+7NaJLXO7BJMkBJ4/xN/uP/S5r/IZet9rTpUZ2eX05n8/wQupRFpbXojL/rn+wu6xr4buaBs2m5qX760n0kVQQHY7NjJ2T/63LJFxkM8TDhLNJKpyMdG82biDSR0+BrtLR3amnqJdSTCf7ydmany1zC0jByG/q9p3BRnaPltdwjqtM3RzqES//VTTyY2WZ7P4924bs5wtySAMuIaBxJOAPmV8YdpoJGCRwznCsSm8QRrOyVlXKm7hQRDgGjslU6p58xkm/s4otXf73FZKMzZa6qP/AARnfl3eR3Dif6dqrYdhcQ6lpBbzEx11LSDWrgQo2vZ21GsbrIw5/bBh/wCzWhrvzBWgX1znPc573FznHLnE5JPeV8Xq7abCCTgODWq0o1Yj61xa5rhxByv0BS620192i27xTtdsDaaScg44L8/ItMRDJfpaPgNjL6mq2QREUgaQREQAREQAWTHuje18bnNe0gtc04II4EFYogC6WrXWxEI7rTue5o/5oMZd82nAz7wR8lsX64tTWktZVPPYBGP7lc6RUz0hgXV27NPg6F9/AsW5rFITZrX5Fg1Fqmou8JpoY/u9KfxN2suk+Z7vd+ZVsbq6ysiaDVlzgBkCF/8AhczRfb8lg3W0t0oSa8PrjiMNTOIbWpdameI6S7WlnA3Pmd7hGf7rQauvdjvVLA6ko6mK4xHZdOQAySPecEZznf8A72VVEg5NDQjmkarX5GIiZPRCLC6UBERWwgAiIgDqx+zaydlRcfFZ5F86trL7TcfFZ5FckXiW1M36x9k+h1lwhsgpvVtZPaLh4rPInVtZfabj4rPIrkibUzfrH2T6C4Q2QU3q2svtNx8VnkTq2svtNx8VnkVyRNqJv1j7F6C4Q2QUzq2s3tVw8RnkTq1s3tVw8RnkVzRNqJv1j7F6C4Q2QUzq1s3tVw8RnkTq1s3tVw8RnkVzRNqJv1j7F6C4Q2QUzq1s3tVw8RnkTq1s3tVw8RnkVzRNqJv1j7F6C4Q2QUzq1s3tVw8RnkTq1s3tVw8RnkVzRNqJv1j7F6C4Q2QUzq1s3tVw8RnkTq1s3tVw8RnkVzRNqJv1j7F6C4Q2QUzq1s3tVw8RnkTq1s3tVw8RnkVzRNqJv1j7F6C4Q2QUPUl1u1tqm0TL++prS3bbT09A0vDcE5OyO4Zx3b+G9a5t+1IdIOvYu7NgT+i9F92ZkjIGdrGeK3mptGz19zlu9ruLqarID9jY4va3ZGHgjZyABwP5qJFpy5n7PRaH04bWmqBMZePw+mG/Ocfh3/JdWxHy1UMwojQajUgl1SkqVra3ULd9fI1m25aVx+gzvVyutqoqcVmon/e6lm1BSwW+N8jt3bjBA7M/Pjgrd6QN3ntcFZdqsvM7C70DqfYdGckbz27hngOKj3G13Wivr7xZY6Krkmp2U7oqouaYiODmkfu44tyPmeyRo+pu89HWR36Nza2Grc0ktABaWtcNnG7A2sDHZhVswebclRuMaMz3Go6JtFU6GRJJO6h03nvwGxsjJyh1G+REXDCYCIiACIiACIiACIiACIiACzEUhGQw4KwXOLnc9ftuVWKK1ymmEzxDvb+DJ2f3u7CuZPK25gpZOOkilOJkVe41OrNHAqjo6Kf0d8X6eadHfF+nmmoJj0/KfYadvEQEU/o74v0806O+L9PNNQTHp+U+xjTt4iAin9HfF+nmnR3xfp5rGoJj0/KfYzp28RART+jvi/TzTo74v0801BMen5T7DTt4iAin9HfF+nmnR3xfp5pqCY9Pyn2GnbxEBFP6O+L9PNfOjvi/TzTUEx6flPsNO3iIKKd0d8X6ea+9HfF+nmmoJj0/KfYadvEQEU/o74v0806O+L9PNNQTHp+U+w07eIgIp/R3xfp5p0d8X6eaagmPT8p9hp28ROREXpYrgREQAREQAREQAREQAREQAREQAREQAREQB//Z" width="50"></td>
+      <td>IndusInd Bank</td>
+      <td>1860 500 5004</td>
+      <td>1860 267 7777</td>
+      <td>1860 500 5004</td>
+      <td><a href="https://www.indusind.com/in/en/personal/grievance-redressal.html?utm_source=Google_Organic_Search" target="_blank" class="button">Help Section</a></td>
+      <td><a href="https://www.indusind.com/iblogs/savings-account/how-to-block-your-debit-card/#:~:text=Use%20The%20Mobile%20or%20Internet,section%2C%20and%20block%20the%20card." target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.indusind.com" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>Bandhan Bank</td>
+      <td>1800 258 8181</td>
+      <td>1800 258 8181</td>
+      <td>1800 258 8181</td>
+      <td><a href="https://bandhanbank.com/grievance-redressal" target="_blank" class="button">Help Section</a></td>
+      <td><a href="https://bandhanbank.com/debit-card-block-unblock" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.bandhanbank.com" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>IDFC First Bank</td>
+      <td>1800 419 4332</td>
+      <td>1800 10 888</td>
+      <td>1800 419 4332</td>
+      <td><a href="https://www.idfcfirstbank.com/contact-us" target="_blank" class="button">Help Section</a></td>
+      <td><a href="https://www.idfcfirstbank.com/customer-care-sr/debit-card-block" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.idfcfirstbank.com" target="_blank" class="button"> Visit Website</a></td>
+    </tr>
+    <tr>
+      <td><img src="data:image/jpeg;base64,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" width="50"></td>
+      <td>Karur Vysya Bank</td>
+      <td>1860 258 1916</td>
+      <td>1860 258 1916</td>
+      <td>1860 258 1916</td>
+      <td><a href="https://www.kvb.co.in/customer-service/feedback-form//" target="_blank" class="button">Complaint/Help</a></td>
+      <td><a href="https://www.kvb.co.in/secure-banking/secure-banking-tips/secure-debit-cards/debit-card-hotlisting/" target="_blank" class="button">Block ATM</a></td>
+      <td><a href="https://www.kvb.co.in" target="_blank" class="button">Visit  Website</a></td>
+    </tr>
+ 
+
+
+    </tbody>
+  </table>
+</div>
+
+<!-- Current Scam Alert Section -->
+<div class="scam-alerts">
+  🚨 **Current Scam Alert**: Beware of fraud calls claiming to be from banks offering fake loans. Always call the official helpline number from your bank's website for verification.
+</div>
+
+<!-- Footer Section with Precaution Guidelines -->
+<div class="footer">
+  <div class="container">
+    <h3>User Precaution Guidelines:</h3>
+    <ul>
+      <li>Never share OTP, PIN, or password with anyone.</li>
+      <li>Verify URLs. Use only HTTPS-enabled bank portals.</li>
+      <li>Report suspicious activity immediately to the bank or dial <strong>1930</strong> for cyber fraud reporting.</li>
+      <li>Do not trust random numbers from social media claiming to be customer care.</li>
+      <li>Use only the verified complaint links listed above.</li>
+      <footer style="text-align: center; padding: 20px; background-color: #003366; font-size: 0.9rem;">
+  © 2025 Banking Helpline Directory. All rights reserved. <br>
+  Content is provided for informational and public safety purposes only. <br>
+  Unauthorized reproduction, scraping, or commercial use is prohibited. <br>
+  Scam alerts are for awareness only and do not imply endorsement by any bank or regulatory authority.
+</footer>
+
+      
+
+    </ul>
+    
+
+  </div>
+</div>
+<script>
+  
+  const alerts = [
+      "🚨 UPI Scam Alert: Fraudsters sending fake 'request money' links. Never approve unknown requests.",
+      "⚠️ Fake loan schemes promising instant approval are being shared on social media.",
+      "📢 KYC fraud: Banks never ask you to update KYC via links in SMS or WhatsApp.",
+      "🚨 Phishing Emails: RBI does NOT send emails asking for account verification.",
+      "⚠️ QR Code Scam: Scammers ask you to scan codes to 'receive' money — never do this!",
+      "📞 Fake customer care numbers are circulating on Google — verify only from official websites.",
+      "💰 Cashback scam: Do not click on links offering 'Bank Cashback' from unknown senders.",
+      "📢 Voice Call Fraud: Fraudsters impersonate bank officers asking for OTPs or CVV — hang up!",
+      "⚠️ UPI PIN Trap: Scammers ask for your PIN in the name of refund — no bank needs it.",
+      "🛑 Don’t share debit/credit card details, even if someone claims to be from the bank.",
+      "🚨 Investment scams: No bank guarantees double returns. Report such schemes to RBI.",
+      "📢 Missed call fraud: Calling back unknown numbers can lead to balance deductions.",
+      "⚠️ Fake app links: Download banking apps only from official Play Store or App Store."
+    ];
+
+    let index = 0;
+
+    function updateAlert() {
+      const msg = document.getElementById("alert-message");
+      msg.textContent = alerts[index];
+      index = (index + 1) % alerts.length;
+    }
+
+    // Start alert cycle
+    updateAlert();
+    setInterval(updateAlert, 10000); // Change every 10 seconds
+     const chatWindow = document.getElementById("chat-window");
+
+  const responses = {
+    
+ 
+
+
+  "upi": "Having UPI issues? Ensure your app is updated. Check internet connection. For failed transactions, wait 24 hours.",
+  "atm": "ATM issues like cash not dispensed? Note the ATM ID and file a complaint on your bank website.",
+  "kyc": "KYC can be updated via net banking or at your branch. Avoid links from unknown messages.",
+  "fraud": "Block your card/UPI immediately if you suspect fraud. Then report to your bank and RBI at https://cms.rbi.org.in.",
+  "timing": "Bank timings are usually 10 AM to 4 PM on weekdays. Saturdays often close by 2 PM.",
+  "rbi": "RBI never asks for personal info. Visit https://rbi.org.in for updates and financial safety tips.",
+  "complaint": "You can raise complaints at your bank or through RBI's portal: https://cms.rbi.org.in.",
+  "balance": "You can check balance via mobile app, missed call, or ATM. Check your bank's specific method.",
+  "statement": "Download your account statement via net banking or visit the bank branch.",
+  "cheque book": "You can request a cheque book through mobile/net banking or at your branch.",
+  "loan status": "Loan status can be checked via mobile banking or by contacting your bank's loan department.",
+  "credit card": "To apply for a credit card, visit your bank’s site. For issues, contact the card customer care.",
+  "debit card": "For lost debit cards, block it immediately using the app or helpline. Request a new one thereafter.",
+  "ifsc": "IFSC code can be found on your cheque book, passbook, or the bank’s official site.",
+  "swift": "SWIFT codes are used for international transactions. Check your bank website or branch for the code.",
+  "interest rate": "Interest rates vary. Visit your bank website or RBI rate bulletin.",
+  "fd": "Fixed Deposits offer secure savings. Check bank website for interest rates & online booking.",
+  "rd": "Recurring Deposits let you save monthly. Interest and terms vary per bank.",
+  "net banking": "To activate net banking, visit the official bank portal or branch. Avoid fake links.",
+  "mobile banking": "Download your bank’s official mobile app from Play Store or App Store to access mobile banking.",
+  "password reset": "Forgot your password? Use 'Forgot Password' on login page or contact customer support.",
+  "pin change": "Change your debit card PIN using ATM, net banking, or mobile app.",
+  "account block": "Suspicious activity? Contact your bank and request account freezing immediately.",
+  "unblock card": "To unblock a card, call customer care or visit the branch with ID proof.",
+  "bank charges": "Bank service charges are listed on their website under 'Service Charges' or 'Tariff'.",
+  "minimum balance": "Each bank sets its own minimum balance rules. Check your bank’s website.",
+  "inactive account": "Accounts inactive for long are frozen. Reactivate by visiting your branch with ID proof.",
+  "joint account": "Joint accounts can be opened with family. Both parties need KYC and consent.",
+  "nominee": "Add a nominee through net banking or at the branch using a nomination form.",
+  "pan update": "Update your PAN via net banking or by submitting a PAN update form at your branch.",
+  "aadhaar link": "Link Aadhaar with account via bank website, app, or by visiting a branch.",
+  "account number": "Your account number is on your passbook, chequebook, or mobile app.",
+  "cancel cheque": "Use a cancelled cheque for KYC or ECS purposes. Draw two lines and write 'Cancelled'.",
+  "net banking lock": "If net banking is locked, reset password or call customer care to unlock it.",
+  "account transfer": "You can transfer account to another branch via written request and KYC documents.",
+  "neft": "NEFT transfers take 2-3 hours during working hours. Available in banking hours only.",
+  "rtgs": "RTGS is used for high-value transfers (above ₹2L). Real-time settlement between banks.",
+  "imps": "IMPS is instant 24x7 fund transfer. Use mobile number, MMID, or account+IFSC.",
+  "limit": "Transaction limits vary by account and method. Check your bank’s website or app.",
+  "charges": "Most banks publish fees for SMS alerts, ATM use, NEFT, etc. under their 'Tariff Sheet'.",
+  "sms alerts": "You can enable or disable SMS alerts through net banking or by contacting your branch.",
+  "contactless": "Contactless cards use NFC. Tap near the terminal for quick payments (limit ₹5000).",
+  "international": "Enable international transactions via net banking or contact customer service.",
+  "card delivery": "Card delivery takes 5–10 working days post request. Track via courier SMS or app.",
+  "email update": "Update email via net banking or submit a form at your branch.",
+  "mobile update": "Update mobile number via net banking or fill a request at your home branch.",
+  "locker": "Bank lockers are rented based on availability and require KYC and agreement.",
+  "nri account": "NRI accounts (NRE/NRO) are for Indians abroad. Apply online or at select branches.",
+  "forex": "Banks provide Forex for travel. Rates vary daily. Carry passport & tickets.",
+  "debit decline": "Decline may happen due to insufficient funds, card expiry, or limit exceeded.",
+  "upi pin": "Set or reset UPI PIN through your UPI app like PhonePe, GPay, Paytm or bank app.",
+  "rewards": "Some debit/credit cards offer cashback or rewards. Track via bank app or site.",
+  "auto debit": "Auto-debit can be managed under mandates in net banking/mobile app.",
+  "bill pay": "Use BBPS (Bharat Bill Payment System) in bank app to pay utility bills securely.",
+  "upi limit": "Most banks allow ₹1 lakh/day for UPI. Some limit per transaction (₹2K–₹25K).",
+  "link accounts": "You can link multiple accounts to one UPI ID from the same or different banks.",
+  "virtual card": "Virtual cards are temporary cards for secure online use. Generated via app.",
+  "account freeze": "Account frozen due to compliance? Visit branch with ID to resolve KYC or other issues.",
+  "nomination": "Nomination ensures easy claim settlement. Add it through the app or at the branch.",
+  "senior citizen": "Senior citizen accounts offer extra interest and benefits. Carry age proof to open.",
+  "student account": "Student accounts usually have zero balance and limited features. ID proof needed.",
+  "zero balance": "Zero-balance accounts like PMJDY are designed for basic banking needs.",
+  "pmjdy": "Pradhan Mantri Jan Dhan Yojana offers zero-balance accounts and RuPay card for all citizens.",
+  "atm pin": "Set or change your ATM PIN via ATM, net banking, or mobile app. Never share it.",
+  "prepaid card": "Prepaid cards can be loaded and used like debit cards. Check your bank’s product page.",
+  "reissue card": "Lost/damaged card? Request reissue via net banking or at your bank branch.",
+  "emi": "Check EMI due dates in your loan or card section on app/portal. Pay before due to avoid penalties.",
+  "missed call": "Many banks offer balance check via missed call. Search your bank’s missed call number.",
+  "qr code": "UPI QR code can be generated in app. Merchants can accept using QR or UPI ID.",
+  "cash deposit": "Deposit cash using ATM (CDM) or at the counter with your account number.",
+  "cash withdrawal": "Use ATM with PIN or cheque at bank to withdraw cash. Limits may apply.",
+  "fd breakup": "You can close FD online if premature closure is allowed. Interest may be reduced.",
+  "dormant": "Account inactive for over 2 years becomes dormant. Visit branch to reactivate with ID.",
+  "updating kyc": "KYC needs to be updated with PAN, Aadhaar, photo, etc. if outdated or as per bank request.",
+  "password expired": "Reset expired password using your mobile/email and OTP verification.",
+  "sms banking": "SMS banking allows balance, mini statement, etc. via SMS codes. Check with your bank.",
+  "nominee update": "You can update your nominee details via internet banking or by visiting your branch.",
+  "kyc due": "If KYC is due, update using official bank app or branch. Do not trust messages or calls.",
+  "card blocked": "Card blocked due to fraud/incorrect PIN? Contact your bank to reissue or unblock.",
+  "international card": "For international use, enable card access and set limits via net banking or mobile app.",
+  "netbanking disabled": "If net banking is disabled, it could be due to inactivity. Reactivate via request form or branch visit.",
+  "sms otp": "OTP is a one-time password sent to your registered mobile for secure transactions.",
+  "loan emi": "Your EMI will auto-debit if mandate exists. Ensure funds are available.",
+  "digital locker": "Some banks offer DigiLocker integration for storing your documents securely.",
+  "auto sweep": "Auto Sweep FDs earn higher interest when savings exceeds threshold. Enable via bank settings.",
+  "nominee claim": "In case of account holder death, nominee can claim funds with death certificate and ID.",
+  "loan moratorium": "During special events (like COVID-19), RBI may allow moratorium. Contact your bank for updates.",
+  "mobile lost": "If you lose your phone, block banking access by calling your bank immediately.",
+  "transaction history": "You can view last 10–100 transactions via net banking or mobile app.",
+   "how to open bank account": "Visit your nearest bank branch with ID and address proof. Fill out the application and complete KYC.",
+  "minimum balance": "Minimum balance varies by bank and account type. Typically ₹1000–₹10,000.",
+  "upi issue": "Ensure your UPI app is updated and your mobile is linked to the account. Try restarting the app.",
+  "kyc update": "You can update KYC through net banking, mobile app, or by visiting your branch with valid ID proof.",
+  "atm card lost": "Immediately block your card via net banking or call customer support. Request reissue from your bank.",
+  "rbi complaint": "Visit https://cms.rbi.org.in to file complaints regarding banking issues.",
+  "account balance": "Check your balance via missed call, ATM, mobile app, or net banking.",
+  "statement": "Download your statement through mobile or internet banking, or visit the branch.",
+  "credit card apply": "Apply online through your bank’s website or visit the branch.",
+  "loan apply": "Visit the bank with documents (ID, income proof, etc.) or apply via the bank website.",
+  "interest rate": "Interest rates vary by bank. Visit your bank’s website for updated FD, RD, or loan rates.",
+  "net banking activation": "Register for net banking via the bank website or fill a form at your branch.",
+  "debit card pin reset": "Reset PIN via ATM, mobile app, or net banking. Avoid sharing PIN.",
+  "block account": "If suspicious activity occurs, contact your bank immediately to freeze the account.",
+  "ifsc code": "Find IFSC on your passbook, cheque, or bank website.",
+  "bank timings": "Most banks operate 10 AM to 4 PM Mon–Fri. Saturday may close early.",
+  "locker facility": "Bank lockers are available on rent. Visit your bank with KYC documents to apply.",
+  "nri account": "Open NRE/NRO account via select branches or online with passport, visa, and address proof.",
+  "rd account": "Recurring Deposit (RD) allows monthly savings. Open online or in-branch.",
+  "fd account": "Fixed Deposits (FDs) offer fixed returns. Compare rates on bank websites.",
+  "upi pin reset": "Reset UPI PIN through your UPI app using your debit card details.",
+  "mobile banking": "Download your bank’s official app and register using your account and mobile number.",
+  "aadhaar link": "Link Aadhaar via internet/mobile banking or visit branch with Aadhaar card.",
+  "sms alerts": "Enable SMS alerts in your mobile/net banking settings or by request at the branch.",
+  "nominee": "Add a nominee via net banking or by submitting a form at your bank branch.",
+  "account freeze": "Contact the branch or customer care if your account is frozen.",
+  "bank charges": "All service charges are listed on your bank’s official website under 'Fees & Charges'.",
+  
+  "what is ifsc code": "An IFSC code is an 11-digit alphanumeric code used to uniquely identify bank branches in India for electronic money transfers like NEFT, RTGS, and IMPS.",
+  
+  "how to block atm card": "You can block your ATM card by calling your bank's 24x7 customer care number or using the mobile/net banking facility under 'Card Services'.",
+
+  "what is upi": "UPI (Unified Payments Interface) is a real-time payment system that allows instant transfer of money between bank accounts via mobile devices using a UPI ID.",
+
+  "how to reset atm pin": "You can reset your ATM PIN through internet banking, mobile banking, or by visiting an ATM of your bank and choosing the 'PIN Change' option.",
+
+  "what to do if atm card is lost": "Immediately block the card via net banking, mobile banking, or customer care. Then apply for a new card at the branch or online.",
+
+  "how to open savings account": "Visit your nearest bank branch or use the bank's website/app to apply. You'll need documents like Aadhaar, PAN card, and a photograph.",
+
+  "minimum balance in savings account": "Minimum balance varies by bank and account type. It ranges from ₹0 to ₹10,000. Check your bank's official website for details.",
+
+  "how to apply for cheque book": "You can apply for a cheque book through net banking, mobile banking, or by visiting your bank branch.",
+
+  "what is neft": "NEFT (National Electronic Funds Transfer) is an Indian electronic payment system that enables fund transfer between banks. It's usually settled in batches every half hour.",
+
+  "neft charges": "Most banks do not charge for NEFT through digital channels. Charges may apply for branch-based transactions. Please confirm with your bank.",
+
+  "what is rtgs": "RTGS (Real Time Gross Settlement) is used for transferring large sums (₹2 lakh and above) in real-time between bank accounts.",
+
+  "rtgs timing": "RTGS services are available 24x7 including weekends and holidays, as per RBI guidelines.",
+
+  "how to close bank account": "Visit your branch with your ID proof and submit a written request or closure form. Ensure zero balance and return cheque books/cards.",
+
+  "what is bank statement": "A bank statement is a record of all transactions in your account over a period. You can download it via net/mobile banking.",
+
+  "how to get bank statement": "Log in to internet/mobile banking and go to 'Account Statement'. You can view, download or email it from there.",
+
+  "how to register mobile number with bank": "Visit the branch and fill a mobile number update form or use the ATM or net banking if your bank allows it.",
+
+  "what is cibil score": "CIBIL score is a 3-digit number (300-900) that reflects your creditworthiness based on past loan and credit card history.",
+
+  "how to increase cibil score": "Pay EMIs and credit card bills on time, reduce outstanding balances, avoid multiple loans, and monitor your credit report regularly.",
+
+  "what is kyc": "KYC (Know Your Customer) is a process to verify your identity using official documents like Aadhaar, PAN, etc., for account opening or updates.",
+
+  "how to update kyc": "Visit your branch with the latest KYC documents or upload them via net banking if your bank provides that facility.",
+
+  "what is imps": "IMPS (Immediate Payment Service) enables real-time money transfer 24x7 through mobile banking, internet banking, or ATMs.",
+
+  "imps charges": "IMPS charges vary by bank, usually ₹2.5 to ₹25 + GST per transaction. Many banks offer it free via mobile banking.",
+
+  "upi transaction failed but amount debited": "If a UPI transaction fails but money is debited, it is usually refunded automatically within 3 working days. Contact support if not refunded.",
+
+  "how to apply for credit card": "You can apply online via the bank's website or visit the branch. Eligibility includes income proof, ID, and good credit history.",
+
+  "how to activate credit card": "Follow instructions received with the card. Usually, you can activate it through ATM, customer care, or mobile banking app.",
+
+  "how to increase credit card limit": "Request via mobile/net banking or call customer care. The bank will review your usage and credit history before approval.",
+
+  "how to block credit card": "Use mobile banking, internet banking, or call customer care immediately to block your credit card in case of loss or theft.",
+
+  "difference between debit and credit card": "Debit cards use your bank account funds, while credit cards allow you to borrow funds up to a limit, to be repaid later.",
+
+  "how to get atm card": "You will receive an ATM card when opening an account. You can also apply for a new one via net banking or visiting the branch.",
+
+  "charges for atm withdrawal": "Usually, the first 3-5 withdrawals per month from other bank ATMs are free. Beyond that, ₹20 per transaction is charged.",
+
+  "how to change registered email id": "Visit the branch with ID proof or use net/mobile banking to update your email ID if supported.",
+
+  "how to change address in bank": "Submit a written request with valid address proof at your branch. Some banks allow updates via online channels too.",
+
+  "what is bank swift code": "A SWIFT code is used for international wire transfers. It uniquely identifies a bank worldwide.",
+
+  "how to receive international money": "Provide your bank’s SWIFT code, your account number, and personal details to the sender for wire transfer.",
+
+  "how to link aadhaar with bank": "You can link Aadhaar via internet banking, mobile app, ATM, SMS, or by visiting the branch.",
+
+  "what is customer id": "Customer ID is a unique identifier for your relationship with the bank. It’s usually mentioned in your passbook or account statement.",
+
+  "how to activate net banking": "Visit your bank's official website, click on 'Register for Net Banking', and follow the instructions. You'll need your account details and OTP.",
+
+  "what is bank locker facility": "Banks provide lockers to store valuables securely. You need to apply and pay annual rental charges.",
+
+  "how to open joint account": "Submit a joint account opening form with all applicants' KYC documents. All parties must be present at the branch.",
+
+  "what is overdraft": "An overdraft is a credit facility that allows you to withdraw more money than your account balance, up to a certain limit.",
+
+  "how to enable international transaction on card": "Login to net/mobile banking and enable international usage under card settings. Or call customer support.",
+
+  "what is bank moratorium": "A moratorium is a temporary suspension of loan EMIs granted by banks during financial emergencies (e.g., COVID-19).",
+
+  "how to pay emi": "Use auto-debit, net banking, mobile app, or UPI to pay your loan EMI before the due date.",
+
+  "loan rejected reason": "Common reasons include low CIBIL score, insufficient income, unstable job, or incomplete documents.",
+
+  "what is account number": "An account number uniquely identifies your bank account. It is used for transactions and is printed on your passbook or chequebook.",
+
+  "what to do in case of fraud transaction": "Immediately call your bank's helpline, block your card/account, and lodge a complaint. File a police report if needed.",
+
+  "how to file complaint against bank": "Visit your bank’s website or branch. If unresolved, file a complaint with the RBI Ombudsman at https://cms.rbi.org.in.",
+
+  "what is bank holiday today": "You can check the list of bank holidays on the RBI website or your bank's official site under the 'Holiday List' section.",
+
+  "how to check bank balance": "You can check your balance via ATM, mobile banking app, SMS, missed call, or internet banking.",
+    "hi": "Hello! How can I help you with your banking queries today?",
+  "hello": "Hi there! I'm here to assist you with banking-related questions.",
+  "hii": "Hello! Need help with banking information? Just ask!",
+  "bank helpline number": "Each bank has a specific helpline. You can find it on the bank’s official website or your Banking Helpline Directory."
+
+
+ 
+
+  };
+  const chatbox = document.getElementById("chatbox");
+    const input = document.getElementById("input");
+    const send = document.getElementById("send");
+
+
+  function appendMsg(text, sender) {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("msg", sender);
+    msgDiv.innerText = text;
+    chatWindow.appendChild(msgDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  function sendMsg() {
+    const input = document.getElementById("user-input");
+    const userText = input.value.trim();
+    if (!userText) return;
+
+    appendMsg(userText, "user");
+
+    const keyword = userText.toLowerCase();
+    let matched = false;
+    for (const key in responses) {
+      if (keyword.includes(key)) {
+        appendMsg(responses[key], "bot");
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      appendMsg("❓ Sorry, I didn't understand that. Try asking about UPI, ATM, KYC, or fraud.", "bot");
+    }
+
+    input.value = "";
+  }
+
+  function filterBanks() {
+    const input = document.getElementById('bankSearch');
+    const filter = input.value.toLowerCase();
+    const table = document.querySelector('table');
+    const tr = table.getElementsByTagName('tr');
+
+    for (let i = 1; i < tr.length; i++) {
+      const td = tr[i].getElementsByTagName('td')[1]; // Bank name column
+      if (td) {
+        const txtValue = td.textContent || td.innerText;
+        tr[i].style.display = txtValue.toLowerCase().includes(filter) ? "" : "none";
+      }
+    }
+  }
+  
+ function toggleChatbot() {
+      const chatbot = document.getElementById("chatbot");
+      const btn = document.getElementById("toggleBtn");
+
+      if (chatbot.style.display === "none") {
+        chatbot.style.display = "block";
+        btn.textContent = "Disable Chatbot";
+      } else {
+        chatbot.style.display = "none";
+        btn.textContent = "Enable Chatbot";
+      }
+    }
+
+  
+
+
+
+
+
+
+</script>
+
+
+  
+
+</body>
+</html>

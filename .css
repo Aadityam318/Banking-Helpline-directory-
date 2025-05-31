@@ -1,0 +1,24 @@
+#alert-container {
+  width: 100%;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 1s ease-in-out;
+}
+
+#real-time-alert span {
+  margin-left: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; top: -20px; }
+  to { opacity: 1; top: 0; }
+}
